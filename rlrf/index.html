@@ -1,0 +1,1945 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="RLRF: Rendering-Aware Reinforcement Learning for Vector Graphics Generation">
+  <meta name="keywords" content="RLRF, SVG, Reinforcement Learning, Vector Graphics">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RLRF: Rendering-Aware Reinforcement Learning</title>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+  <link rel="stylesheet" href="../static/css/index.css">
+  <link rel="icon" href="../starvector/images/icons/dizzy_star.png">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/tonsky/FiraCode@5.2/distr/fira_code.css">
+  <style>
+    body {
+      background-color: #f9f9f9;
+      background-image: linear-gradient(to bottom, #ffffff, #f5f5f5);
+      color: #333;
+      font-family: 'Google Sans', 'Noto Sans', sans-serif;
+    }
+    
+    .hero {
+      background: linear-gradient(135deg, rgba(246, 137, 70, 0.05), rgba(0, 138, 215, 0.05));
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      transition: background 0.3s ease;
+    }
+    
+    .hero:hover {
+      background: linear-gradient(135deg, rgba(246, 137, 70, 0.08), rgba(0, 138, 215, 0.08));
+    }
+    
+    .publication-title {
+      background: linear-gradient(90deg, #f68946, #008AD7);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .author-block {
+      display: inline-block;
+      margin: 0 5px;
+      transition: transform 0.3s ease;
+    }
+    
+    .author-block:hover {
+      transform: translateY(-2px);
+    }
+    
+    .author-block a {
+      color: #333;
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.3s ease, transform 0.3s ease;
+      display: inline-block;
+    }
+    
+    .author-block a:hover {
+      color: #008AD7;
+      transform: translateY(-2px);
+    }
+    
+    .author-block sup {
+      color: #666;
+      font-size: 0.8em;
+    }
+
+    .publication-authors {
+      margin-top: 1.5rem;
+    }
+    
+    /* Gradient text hover effect for authors and affiliations */
+    .gradient-text-hover {
+      display: inline-block;
+      transition: all 0.3s ease;
+    }
+    
+    .gradient-text-hover:hover {
+      background: linear-gradient(90deg, #f68946, #008AD7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      transform: scale(1.05);
+    }
+    
+    .affiliation-block {
+      display: inline-block;
+      margin: 5px 10px;
+      font-size: 0.9rem;
+      color: #555;
+      transition: transform 0.3s ease;
+    }
+    
+    .affiliation-block:hover {
+      transform: translateY(-2px);
+    }
+
+    .abstract-container {
+      position: relative;
+      padding: 3px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(246, 137, 70, 0.3), rgba(0, 138, 215, 0.3));
+      margin-bottom: 2rem;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .abstract-container::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 16px;
+      padding: 3px;
+      background: linear-gradient(135deg, #f68946, #008AD7);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    
+    .abstract-container:hover::before {
+      opacity: 1;
+    }
+    
+    .abstract-container:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(246, 137, 70, 0.15), 0 12px 24px rgba(0, 138, 215, 0.15);
+    }
+    
+    .abstract-inner {
+      position: relative;
+      background: linear-gradient(145deg, #ffffff, #fafbfc);
+      border-radius: 14px;
+      padding: 2.5rem 3rem;
+      overflow: hidden;
+    }
+    
+    .abstract-inner::before {
+      content: '"';
+      position: absolute;
+      top: -20px;
+      left: 20px;
+      font-size: 8rem;
+      font-family: Georgia, serif;
+      background: linear-gradient(135deg, rgba(246, 137, 70, 0.08), rgba(0, 138, 215, 0.08));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1;
+      pointer-events: none;
+      transition: all 0.4s ease;
+    }
+    
+    .abstract-container:hover .abstract-inner::before {
+      background: linear-gradient(135deg, rgba(246, 137, 70, 0.15), rgba(0, 138, 215, 0.15));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      transform: scale(1.1) rotate(-5deg);
+    }
+    
+    .abstract-inner::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 150px;
+      height: 150px;
+      background: radial-gradient(circle at top right, rgba(246, 137, 70, 0.05), transparent 70%);
+      pointer-events: none;
+      transition: all 0.4s ease;
+    }
+    
+    .abstract-container:hover .abstract-inner::after {
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle at top right, rgba(246, 137, 70, 0.1), transparent 70%);
+    }
+    
+    .abstract-text {
+      font-size: 1.15rem;
+      line-height: 1.85;
+      color: #3a3a3a;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .abstract-text p {
+      margin-bottom: 1.25rem;
+      transition: color 0.3s ease;
+    }
+    
+    .abstract-text p:last-child {
+      margin-bottom: 0;
+    }
+    
+    .abstract-container:hover .abstract-text p {
+      color: #2a2a2a;
+    }
+    
+    .abstract-text strong {
+      background: linear-gradient(90deg, #f68946, #008AD7);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 700;
+    }
+    
+    .abstract-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #888;
+      margin-bottom: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .abstract-label::before {
+      content: '';
+      width: 24px;
+      height: 2px;
+      background: linear-gradient(90deg, #f68946, #008AD7);
+      border-radius: 2px;
+      transition: width 0.3s ease;
+    }
+    
+    .abstract-container:hover .abstract-label {
+      color: #666;
+      letter-spacing: 3px;
+    }
+    
+    .abstract-container:hover .abstract-label::before {
+      width: 36px;
+    }
+
+    .table-container {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      margin-top: 2rem;
+      transition: box-shadow 0.3s ease;
+    }
+    
+    .table-container:hover {
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    }
+
+    .table thead th {
+      background-color: #f8f9fa;
+      color: #444;
+      font-weight: 700;
+      transition: background-color 0.3s ease;
+    }
+    
+    .table-container:hover thead th {
+      background-color: #f0f0f0;
+    }
+
+    .table tbody tr {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border-left: 3px solid transparent;
+    }
+
+    .table tbody tr:hover {
+      background: linear-gradient(90deg, rgba(246, 137, 70, 0.12), rgba(0, 138, 215, 0.12)) !important;
+      transform: translateY(-3px) scale(1.01);
+      box-shadow: 0 8px 24px rgba(246, 137, 70, 0.15), 0 4px 12px rgba(0, 138, 215, 0.15);
+      border-left: 3px solid;
+      border-image: linear-gradient(180deg, #f68946, #008AD7) 1;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .table tbody tr:hover td {
+      color: #222;
+    }
+    
+    .table tbody tr:hover td:first-child {
+      font-weight: 600;
+    }
+    
+    /* Highlight cells on hover */
+    .table td {
+      transition: all 0.3s ease;
+    }
+
+    footer {
+      background: linear-gradient(135deg, rgba(246, 137, 70, 0.05), rgba(0, 138, 215, 0.05));
+      padding: 3rem 1.5rem;
+      margin-top: 3rem;
+      border-top: 1px solid rgba(0,0,0,0.05);
+      transition: background 0.3s ease;
+    }
+    
+    footer:hover {
+      background: linear-gradient(135deg, rgba(246, 137, 70, 0.08), rgba(0, 138, 215, 0.08));
+    }
+
+    /* Section hover effects */
+    .section {
+      padding: 2rem 1.5rem;
+      background-color: white;
+      margin: 1rem auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      border: 1px solid rgba(0,0,0,0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .section:hover {
+      box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+      transform: translateY(-2px);
+    }
+    
+    /* Title hover effects */
+    .title.is-3 {
+      position: relative;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.5rem;
+      transition: color 0.3s ease;
+    }
+    
+    .title.is-3:hover {
+      color: #f68946;
+    }
+    
+    .title.is-3:after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(90deg, #f68946, #008AD7);
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+    
+    .title.is-3:hover:after {
+      width: 120px;
+    }
+    
+    /* Enhanced hover effect for main title */
+    .title.is-1 {
+      transition: text-shadow 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .title.is-1:hover {
+      text-shadow: 0 0 20px rgba(246, 137, 70, 0.4), 0 0 40px rgba(0, 138, 215, 0.3);
+    }
+
+    /* Animations and Interactions */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-box {
+      opacity: 0;
+      animation: fadeInUp 0.8s ease-out forwards;
+    }
+
+    .delay-1 { animation-delay: 0.2s; }
+    .delay-2 { animation-delay: 0.4s; }
+    .delay-3 { animation-delay: 0.6s; }
+
+    .hover-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      padding: 1.5rem;
+      border-radius: 12px;
+      background: white;
+    }
+
+    .hover-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+    }
+
+    figure {
+      background-color: white;
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      overflow: hidden;
+    }
+    
+    figure:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+    }
+
+    figure img {
+      transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s;
+      cursor: zoom-in;
+    }
+
+    figure img:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12) !important;
+      opacity: 0.95;
+    }
+    
+    figcaption {
+      padding: 1rem 0.5rem;
+      font-size: 0.9rem;
+      color: #666;
+      border-top: 1px solid #eee;
+      margin-top: 1rem;
+      transition: color 0.3s ease;
+    }
+    
+    figure:hover figcaption {
+      color: #333;
+    }
+    
+    /* Button hover effects */
+    .external-link.button {
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+    }
+    
+    .external-link.button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2) !important;
+    }
+    
+    /* Citation box hover */
+    .citation-box {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .citation-box:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+    }
+    
+    /* Link hover effects */
+    a {
+      transition: color 0.3s ease, text-decoration 0.3s ease;
+    }
+    
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title" style="font-size: 2.8rem; margin-bottom: 2.5rem;">
+            <img src="images/best-apple.svg" alt="Apple" style="height: 1.7em; vertical-align: top; margin-right: -0.5em; margin-top: -0.4em;"> Rendering-Aware Reinforcement Learning for<br>Vector Graphics Generation
+          </h1>
+          <div class="is-size-4 publication-authors">
+            <span class="author-block"><span class="gradient-text-hover">Joan Rodriguez</span><sup>1,2,3</sup>,</span>
+            <span class="author-block"><span class="gradient-text-hover">Haotian Zhang</span><sup>5</sup>,</span>
+            <span class="author-block"><span class="gradient-text-hover">Abhay Puri</span><sup>1</sup>,</span>
+            <span class="author-block"><span class="gradient-text-hover">Aarash Feizi</span><sup>1,2,11</sup>,</span>
+            <span class="author-block"><span class="gradient-text-hover">Rishav Pramanik</span><sup>7</sup>,</span>
+            <span class="author-block"><span class="gradient-text-hover">Pascal Wichmann</span><sup>6</sup>,</span>
+            <span class="author-block"><span class="gradient-text-hover">Arnab Mondal</span><sup>2,8</sup>,</span>
+            <span class="author-block"><span class="gradient-text-hover">Mohammad Reza Samsami</span><sup>2,9</sup>,</span>
+            <br>
+            <span class="author-block"><span class="gradient-text-hover">Rabiul Awal</span><sup>1,2</sup>,</span>
+            <span class="author-block"><span class="gradient-text-hover">Perouz Taslakian</span><sup>1</sup>,</span>
+            <span class="author-block"><span class="gradient-text-hover">Spandana Gella</span><sup>1</sup>,</span>
+            <span class="author-block"><span class="gradient-text-hover">Sai Rajeswar</span><sup>1,2</sup>,</span>
+            <span class="author-block"><span class="gradient-text-hover">David Vazquez</span><sup>1</sup>,</span>
+            <span class="author-block"><span class="gradient-text-hover">Christopher Pal</span><sup>1,2,4,10</sup>,</span>
+            <span class="author-block"><span class="gradient-text-hover">Marco Pedersoli</span><sup>1,2,3</sup></span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="affiliation-block"><sup>1</sup><span class="gradient-text-hover">ServiceNow Research</span></span>
+            <span class="affiliation-block"><sup>2</sup><span class="gradient-text-hover">Mila</span></span>
+            <span class="affiliation-block"><sup>3</sup><span class="gradient-text-hover">ÉTS Montréal</span></span>
+            <span class="affiliation-block"><sup>4</sup><span class="gradient-text-hover">Polytechnique Montréal</span></span>
+            <span class="affiliation-block"><sup>5</sup><span class="gradient-text-hover">Columbia University</span></span>
+            <br>
+            <span class="affiliation-block"><sup>6</sup><span class="gradient-text-hover">Independent Scholar</span></span>
+            <span class="affiliation-block"><sup>7</sup><span class="gradient-text-hover">Stony Brook University</span></span>
+            <span class="affiliation-block"><sup>8</sup><span class="gradient-text-hover">Apple</span></span>
+            <span class="affiliation-block"><sup>9</sup><span class="gradient-text-hover">Google Research</span></span>
+            <span class="affiliation-block"><sup>10</sup><span class="gradient-text-hover">Canada CIFAR AI Chair</span></span>
+            <span class="affiliation-block"><sup>11</sup><span class="gradient-text-hover">McGill University</span></span>
+          </div>
+
+          <!-- Hero Banner Background with Badge and Buttons -->
+          <div class="hero-banner-container">
+            <img src="images/rlrf-banner.png" alt="" class="hero-banner-bg">
+            <div class="hero-banner-content">
+              <!-- NeurIPS 2025 Badge -->
+              <div style="margin-bottom: 1rem;">
+                <span class="neurips-badge">
+                  <i class="fas fa-award" style="margin-right: 0.5rem;"></i>
+                  NeurIPS 2025 · San Diego, California
+                </span>
+              </div>
+              
+              <div class="publication-links">
+                <span class="link-block">
+                  <a href="https://arxiv.org/abs/2505.20793" target="_blank"
+                    class="external-link button is-normal is-rounded is-dark" 
+                    style="background: linear-gradient(135deg, #e85d04, #dc2f02); border: none; box-shadow: 0 3px 6px rgba(232, 93, 4, 0.3); margin: 0.4rem; transition: all 0.3s ease;">
+                    <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                    </span>
+                    <span>Paper on arXiv</span>
+                  </a>
+                </span>
+                <span class="link-block">
+                  <a href="https://arxiv.org/pdf/2505.20793.pdf" target="_blank"
+                    class="external-link button is-normal is-rounded is-dark" 
+                    style="background: linear-gradient(135deg, #f48c06, #e85d04); border: none; box-shadow: 0 3px 6px rgba(244, 140, 6, 0.3); margin: 0.4rem; transition: all 0.3s ease;">
+                    <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                    </span>
+                    <span>arXiv PDF</span>
+                  </a>
+                </span>
+                <span class="link-block">
+                  <a href="images/RLRF-Poster_NeurIPS.pptx.pdf" target="_blank"
+                    class="external-link button is-normal is-rounded is-dark" 
+                    style="background: linear-gradient(135deg, #ffaa00, #f48c06); border: none; box-shadow: 0 3px 6px rgba(255, 170, 0, 0.3); margin: 0.4rem; transition: all 0.3s ease;">
+                    <span class="icon">
+                      <i class="fas fa-image"></i>
+                    </span>
+                    <span>Poster</span>
+                  </a>
+                </span>
+              </div>
+              
+              <!-- Abstract Button -->
+              <div style="margin-top: 1rem;">
+                <button class="abstract-btn" onclick="openAbstractModal()">
+                  <i class="fas fa-book-open"></i>
+                  <span>Abstract</span>
+                </button>
+              </div>
+              
+              <style>
+                .abstract-btn {
+                  display: inline-flex;
+                  align-items: center;
+                  gap: 0.5rem;
+                  background: linear-gradient(135deg, #4a5568, #2d3748);
+                  color: white;
+                  border: none;
+                  padding: 0.6rem 1.4rem;
+                  border-radius: 50px;
+                  font-size: 0.9rem;
+                  font-weight: 600;
+                  cursor: pointer;
+                  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+                  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+                }
+                .abstract-btn:hover {
+                  transform: translateY(-2px);
+                  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+                  background: linear-gradient(135deg, #5a6578, #3d4758);
+                }
+              </style>
+            </div>
+          </div>
+          <style>
+            .hero-banner-container {
+              position: relative;
+              margin-top: 1.5rem;
+              padding: 2.5rem 2rem;
+              border-radius: 20px;
+              overflow: hidden;
+              background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,248,240,0.95));
+              box-shadow: 0 8px 32px rgba(232, 93, 4, 0.1);
+            }
+            .hero-banner-bg {
+              position: absolute;
+              top: 0;
+              left: 50%;
+              transform: translateX(-50%);
+              width: 140%;
+              height: auto;
+              opacity: 0.12;
+              pointer-events: none;
+              filter: blur(1px) saturate(1.2);
+            }
+            .hero-banner-content {
+              position: relative;
+              z-index: 1;
+            }
+            .neurips-badge {
+              display: inline-flex;
+              align-items: center;
+              background: linear-gradient(135deg, #1e3a5f, #2d5a87);
+              color: white;
+              padding: 0.5rem 1.2rem;
+              border-radius: 50px;
+              font-size: 0.95rem;
+              font-weight: 600;
+              box-shadow: 0 4px 12px rgba(30, 58, 95, 0.4);
+              letter-spacing: 0.02em;
+              cursor: default;
+              transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+              position: relative;
+              overflow: hidden;
+            }
+            .neurips-badge::before {
+              content: '';
+              position: absolute;
+              top: 0;
+              left: -100%;
+              width: 100%;
+              height: 100%;
+              background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+              transition: left 0.6s ease;
+            }
+            .neurips-badge:hover {
+              transform: translateY(-3px) scale(1.02);
+              box-shadow: 0 8px 24px rgba(30, 58, 95, 0.5), 0 0 20px rgba(45, 90, 135, 0.3);
+              background: linear-gradient(135deg, #2d5a87, #3d7ab7);
+            }
+            .neurips-badge:hover::before {
+              left: 100%;
+            }
+          </style>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <!-- Method Overview -->
+      <div class="columns is-centered has-text-centered animate-box delay-1" style="margin-bottom: 3rem;">
+        <div class="column is-full hover-card">
+          <h2 class="title is-3">How RLRF Works</h2>
+          <p class="subtitle is-5" style="margin-bottom: 1.5rem; color: #666;">Reinforcement Learning from Rendering Feedback</p>
+          <div class="method-image-container">
+            <img src="images/new-fig-1.png" alt="RLRF Method Overview" class="method-image" onclick="openLightbox('images/new-fig-1.png', 'RLRF Method Overview')">
+          </div>
+          <style>
+            .method-image-container {
+              position: relative;
+              perspective: 1000px;
+              overflow: visible;
+            }
+            .method-image {
+              width: 100%;
+              border-radius: 12px;
+              box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+              transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+              cursor: zoom-in;
+            }
+            .method-image:hover {
+              transform: scale(1.02) translateY(-8px);
+              box-shadow: 
+                0 20px 60px rgba(232, 93, 4, 0.25),
+                0 0 40px rgba(244, 140, 6, 0.15),
+                0 0 80px rgba(255, 170, 0, 0.1);
+            }
+            .method-image-container::before {
+              content: '';
+              position: absolute;
+              inset: -4px;
+              border-radius: 16px;
+              background: linear-gradient(135deg, #e85d04, #f48c06, #ffaa00, #f48c06, #e85d04);
+              background-size: 300% 300%;
+              opacity: 0;
+              z-index: -1;
+              transition: opacity 0.5s ease;
+            }
+            .method-image-container:hover::before {
+              opacity: 0.6;
+              animation: gradient-shift 3s ease infinite;
+            }
+            @keyframes gradient-shift {
+              0%, 100% { background-position: 0% 50%; }
+              50% { background-position: 100% 50%; }
+            }
+          </style>
+          <div class="content has-text-justified" style="margin-top: 1.5rem;">
+            <p>
+              RLRF trains a vision-language model to generate SVG code by using the rendered image as feedback. Unlike traditional supervised learning which only looks at the code tokens, RLRF renders the generated SVG and compares it to the target image. This allows the model to learn from visual mistakes and improve its generation quality, even for complex shapes and gradients that are hard to represent when the model does not see the rendered image.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      
+      <!-- Reward Components -->
+      <div class="columns is-centered has-text-centered animate-box delay-2" style="margin-bottom: 3rem;">
+        <div class="column is-full">
+          <h2 class="title is-3">Composite Reward Function</h2>
+          <p class="subtitle is-5" style="margin-bottom: 2rem; color: #666;">Three complementary signals guide the learning process</p>
+          
+          <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center;">
+            <!-- Reconstruction Reward -->
+            <div style="flex: 1; min-width: 280px; max-width: 350px; background: linear-gradient(135deg, rgba(246, 137, 70, 0.08), rgba(246, 137, 70, 0.02)); padding: 2rem; border-radius: 16px; border: 2px solid rgba(246, 137, 70, 0.2); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 16px 40px rgba(246, 137, 70, 0.2)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+              <div style="width: 60px; height: 60px; margin: 0 auto 1rem; background: linear-gradient(135deg, #f68946, #e55a00); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-image" style="font-size: 1.5rem; color: white;"></i>
+              </div>
+              <h4 style="font-size: 1.2rem; font-weight: 700; color: #333; margin-bottom: 0.75rem;">Reconstruction</h4>
+              <p style="font-size: 0.95rem; color: #555; line-height: 1.6; margin-bottom: 1rem;">
+                Pixel-level fidelity measured via <strong>L2 distance</strong> between the rendered SVG and the input image.
+              </p>
+              <code style="display: inline-block; background: rgba(246, 137, 70, 0.15); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; color: #c74a00;">R<sub>recon</sub> = -||I - Î||²</code>
+            </div>
+            
+            <!-- Semantic Reward -->
+            <div style="flex: 1; min-width: 280px; max-width: 350px; background: linear-gradient(135deg, rgba(0, 138, 215, 0.08), rgba(0, 138, 215, 0.02)); padding: 2rem; border-radius: 16px; border: 2px solid rgba(0, 138, 215, 0.2); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 16px 40px rgba(0, 138, 215, 0.2)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+              <div style="width: 60px; height: 60px; margin: 0 auto 1rem; background: linear-gradient(135deg, #008AD7, #0066a0); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-brain" style="font-size: 1.5rem; color: white;"></i>
+              </div>
+              <h4 style="font-size: 1.2rem; font-weight: 700; color: #333; margin-bottom: 0.75rem;">Semantic Similarity</h4>
+              <p style="font-size: 0.95rem; color: #555; line-height: 1.6; margin-bottom: 1rem;">
+                High-level perceptual alignment using <strong>DreamSim</strong> or <strong>CLIP</strong> embeddings.
+              </p>
+              <code style="display: inline-block; background: rgba(0, 138, 215, 0.15); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; color: #005a8c;">R<sub>sem</sub> = cos(φ(I), φ(Î))</code>
+            </div>
+            
+            <!-- Code Efficiency Reward -->
+            <div style="flex: 1; min-width: 280px; max-width: 350px; background: linear-gradient(135deg, rgba(46, 125, 50, 0.08), rgba(46, 125, 50, 0.02)); padding: 2rem; border-radius: 16px; border: 2px solid rgba(46, 125, 50, 0.2); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 16px 40px rgba(46, 125, 50, 0.2)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+              <div style="width: 60px; height: 60px; margin: 0 auto 1rem; background: linear-gradient(135deg, #2e7d32, #1b5e20); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-code" style="font-size: 1.5rem; color: white;"></i>
+              </div>
+              <h4 style="font-size: 1.2rem; font-weight: 700; color: #333; margin-bottom: 0.75rem;">Code Efficiency</h4>
+              <p style="font-size: 0.95rem; color: #555; line-height: 1.6; margin-bottom: 1rem;">
+                Encourages compact SVG code by penalizing <strong>token length deviation</strong> from ground truth.
+              </p>
+              <code style="display: inline-block; background: rgba(46, 125, 50, 0.15); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; color: #1b5e20;">R<sub>eff</sub> = -|len(ŷ) - len(y)|</code>
+            </div>
+          </div>
+          
+          <div style="margin-top: 2rem; padding: 1.5rem; background: linear-gradient(135deg, rgba(246, 137, 70, 0.05), rgba(0, 138, 215, 0.05)); border-radius: 12px; border: 1px solid rgba(0,0,0,0.08);">
+            <p style="font-size: 1rem; color: #444; margin: 0;">
+              <strong>Combined Reward:</strong> 
+              <code style="background: white; padding: 0.3rem 0.6rem; border-radius: 4px; margin-left: 0.5rem;">R = λ₁·R<sub>recon</sub> + λ₂·R<sub>sem</sub> + λ₃·R<sub>eff</sub></code>
+            </p>
+          </div>
+        </div>
+      </div>
+
+
+
+      <!-- Performance Chart -->
+      <div class="columns is-centered animate-box delay-3" style="margin-bottom: 3rem;">
+        <div class="column is-full hover-card">
+          <h2 class="title is-3 has-text-centered">Performance Comparison</h2>
+          <p class="subtitle is-5 has-text-centered" style="margin-bottom: 2rem; color: #666;">
+            RLRF sets a new state-of-the-art with consistent gains across all metrics.
+          </p>
+          
+          <!-- Chart Container - Pure SVG for crisp text at any zoom level -->
+          <div style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center;">
+            <!-- MSE Chart (Lower is better) -->
+            <div class="chart-card">
+              <h4 style="text-align: center; margin-bottom: 1rem; color: #333; font-weight: 600;">MSE ↓ <span style="font-size: 0.8em; color: #888;">(lower is better)</span></h4>
+              <div id="mseChart" class="svg-chart"></div>
+            </div>
+            
+            <!-- SSIM Chart (Higher is better) -->
+            <div class="chart-card">
+              <h4 style="text-align: center; margin-bottom: 1rem; color: #333; font-weight: 600;">SSIM ↑ <span style="font-size: 0.8em; color: #888;">(higher is better)</span></h4>
+              <div id="ssimChart" class="svg-chart"></div>
+            </div>
+            
+            <!-- DINO Chart (Higher is better) -->
+            <div class="chart-card">
+              <h4 style="text-align: center; margin-bottom: 1rem; color: #333; font-weight: 600;">DINO ↑ <span style="font-size: 0.8em; color: #888;">(higher is better)</span></h4>
+              <div id="dinoChart" class="svg-chart"></div>
+            </div>
+            
+            <!-- LPIPS Chart (Lower is better) -->
+            <div class="chart-card">
+              <h4 style="text-align: center; margin-bottom: 1rem; color: #333; font-weight: 600;">LPIPS ↓ <span style="font-size: 0.8em; color: #888;">(lower is better)</span></h4>
+              <div id="lpipsChart" class="svg-chart"></div>
+            </div>
+            
+            <!-- Code Efficiency Chart (Token Length - closer to 0 is better) -->
+            <div class="chart-card">
+              <h4 style="text-align: center; margin-bottom: 1rem; color: #333; font-weight: 600;">Code Efficiency <span style="font-size: 0.8em; color: #888;">(tokens)</span></h4>
+              <div id="codeEffChart" class="svg-chart"></div>
+            </div>
+            
+            <!-- Time to Sample Chart -->
+            <div class="chart-card">
+              <h4 style="text-align: center; margin-bottom: 1rem; color: #333; font-weight: 600;">Time to Sample <span style="font-size: 0.8em; color: #888;">(seconds)</span></h4>
+              <div id="timeChart" class="svg-chart"></div>
+            </div>
+          </div>
+          
+          <style>
+            .chart-card {
+              flex: 1;
+              min-width: 280px;
+              max-width: 380px;
+              background: white;
+              padding: 1.5rem;
+              border-radius: 12px;
+              box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+              transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+              cursor: pointer;
+              position: relative;
+              overflow: hidden;
+            }
+            .chart-card::before {
+              content: '';
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              height: 3px;
+              background: linear-gradient(90deg, #e85d04, #f48c06, #ffaa00);
+              transform: scaleX(0);
+              transition: transform 0.4s ease;
+            }
+            .chart-card:hover {
+              transform: translateY(-8px);
+              box-shadow: 
+                0 20px 40px rgba(232, 93, 4, 0.15),
+                0 0 30px rgba(244, 140, 6, 0.1);
+            }
+            .chart-card:hover::before {
+              transform: scaleX(1);
+            }
+            .chart-card:hover h4 {
+              color: #e85d04;
+            }
+            .chart-card h4 {
+              transition: color 0.3s ease;
+            }
+          </style>
+          
+          <style>
+            .svg-chart { width: 100%; }
+            .svg-chart svg { width: 100%; height: auto; overflow: visible; }
+            .svg-chart .bar { 
+              transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+              cursor: pointer;
+              filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+            }
+            .svg-chart .bar:hover { 
+              filter: drop-shadow(0 8px 16px rgba(0,0,0,0.2)) brightness(1.1);
+            }
+            .svg-chart .bar:hover rect {
+              transform: scaleY(1.02);
+              transform-origin: bottom;
+            }
+            .svg-chart text { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
+            
+            /* Chart container hover effects */
+            .svg-chart {
+              transition: transform 0.3s ease;
+            }
+            .svg-chart:hover {
+              transform: scale(1.01);
+            }
+          </style>
+          
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              const models = ['GPT-4o', 'LIVE', 'VTracer', 'StarVector-1B', 'Qwen-3B+SFT', 'Qwen-7B+SFT', 'RLRF (7B)'];
+              const rlrfColor = 'rgba(246, 137, 70, 0.9)';
+              const rlrfBorder = 'rgb(230, 115, 50)';
+              const baselineColor = 'rgba(33, 150, 243, 0.75)';
+              const baselineBorder = 'rgb(25, 118, 210)';
+              
+              function createSVGBarChart(containerId, data, options = {}) {
+                const container = document.getElementById(containerId);
+                const { yMin = 0, yMax = null, formatY = (v) => v.toFixed(1), formatLabel = (v) => v.toFixed(2) } = options;
+                
+                const width = 340;
+                const height = 200;
+                const margin = { top: 25, right: 15, bottom: 75, left: 40 };
+                const chartW = width - margin.left - margin.right;
+                const chartH = height - margin.top - margin.bottom;
+                
+                const actualMax = yMax || Math.max(...data) * 1.15;
+                const actualMin = yMin;
+                const range = actualMax - actualMin;
+                
+                const barWidth = chartW / data.length * 0.7;
+                const barGap = chartW / data.length * 0.3;
+                
+                // Create grid lines
+                const gridLines = [];
+                const yTicks = [];
+                const numTicks = 5;
+                for (let i = 0; i <= numTicks; i++) {
+                  const val = actualMin + (range * i / numTicks);
+                  const y = chartH - ((val - actualMin) / range * chartH);
+                  gridLines.push(`<line x1="0" y1="${y}" x2="${chartW}" y2="${y}" stroke="#eee" stroke-width="1"/>`);
+                  yTicks.push(`<text x="-8" y="${y + 4}" text-anchor="end" fill="#888" font-size="10">${formatY(val)}</text>`);
+                }
+                
+                // Create bars and labels
+                const bars = data.map((val, i) => {
+                  const isRlrf = i === data.length - 1;
+                  const fill = isRlrf ? rlrfColor : baselineColor;
+                  const stroke = isRlrf ? rlrfBorder : baselineBorder;
+                  const x = i * (barWidth + barGap) + barGap / 2;
+                  const barH = Math.max(0, ((val - actualMin) / range) * chartH);
+                  const y = chartH - barH;
+                  
+                  return `
+                    <g class="bar">
+                      <rect x="${x}" y="${y}" width="${barWidth}" height="${barH}" 
+                            fill="${fill}" stroke="${stroke}" stroke-width="2" rx="4" ry="4"/>
+                      <text x="${x + barWidth/2}" y="${y - 5}" text-anchor="middle" 
+                            fill="#333" font-size="9" font-weight="600">${formatLabel(val)}</text>
+                    </g>`;
+                }).join('');
+                
+                // Create x-axis labels (rotated 45 degrees)
+                const xLabels = models.map((label, i) => {
+                  const x = i * (barWidth + barGap) + barGap / 2 + barWidth / 2;
+                  return `<text x="${x}" y="${chartH + 12}" 
+                               transform="rotate(45, ${x}, ${chartH + 12})" 
+                               text-anchor="start" fill="#555" font-size="10">${label}</text>`;
+                }).join('');
+                
+                const svg = `
+                  <svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+                    <g transform="translate(${margin.left}, ${margin.top})">
+                      ${gridLines.join('')}
+                      ${yTicks.join('')}
+                      ${bars}
+                      ${xLabels}
+                      <line x1="0" y1="${chartH}" x2="${chartW}" y2="${chartH}" stroke="#ccc" stroke-width="1"/>
+                    </g>
+                  </svg>`;
+                
+                container.innerHTML = svg;
+              }
+              
+              function createSVGBarChartWithNegative(containerId, data, options = {}) {
+                const container = document.getElementById(containerId);
+                const { formatY = (v) => (v/1000).toFixed(0) + 'k', formatLabel = (v) => (v > 0 ? '+' : '') + (v/1000).toFixed(1) + 'k' } = options;
+                
+                const width = 340;
+                const height = 200;
+                const margin = { top: 25, right: 15, bottom: 75, left: 45 };
+                const chartW = width - margin.left - margin.right;
+                const chartH = height - margin.top - margin.bottom;
+                
+                const maxVal = Math.max(...data, 0) * 1.1;
+                const minVal = Math.min(...data, 0) * 1.1;
+                const range = maxVal - minVal;
+                const zeroY = chartH * (maxVal / range);
+                
+                const barWidth = chartW / data.length * 0.7;
+                const barGap = chartW / data.length * 0.3;
+                
+                // Create grid lines
+                const gridLines = [];
+                const yTicks = [];
+                const numTicks = 5;
+                for (let i = 0; i <= numTicks; i++) {
+                  const val = minVal + (range * i / numTicks);
+                  const y = chartH - ((val - minVal) / range * chartH);
+                  gridLines.push(`<line x1="0" y1="${y}" x2="${chartW}" y2="${y}" stroke="#eee" stroke-width="1"/>`);
+                  yTicks.push(`<text x="-8" y="${y + 4}" text-anchor="end" fill="#888" font-size="9">${formatY(val)}</text>`);
+                }
+                
+                // Create bars
+                const bars = data.map((val, i) => {
+                  const isRlrf = i === data.length - 1;
+                  const fill = isRlrf ? rlrfColor : baselineColor;
+                  const stroke = isRlrf ? rlrfBorder : baselineBorder;
+                  const x = i * (barWidth + barGap) + barGap / 2;
+                  
+                  let barH, y, labelY;
+                  if (val >= 0) {
+                    barH = (val / range) * chartH;
+                    y = zeroY - barH;
+                    labelY = y - 5;
+                  } else {
+                    barH = Math.abs(val / range) * chartH;
+                    y = zeroY;
+                    labelY = y + barH + 12;
+                  }
+                  
+                  return `
+                    <g class="bar">
+                      <rect x="${x}" y="${y}" width="${barWidth}" height="${barH}" 
+                            fill="${fill}" stroke="${stroke}" stroke-width="2" rx="4" ry="4"/>
+                      <text x="${x + barWidth/2}" y="${labelY}" text-anchor="middle" 
+                            fill="#333" font-size="8" font-weight="600">${formatLabel(val)}</text>
+                    </g>`;
+                }).join('');
+                
+                // Create x-axis labels
+                const xLabels = models.map((label, i) => {
+                  const x = i * (barWidth + barGap) + barGap / 2 + barWidth / 2;
+                  return `<text x="${x}" y="${chartH + 12}" 
+                               transform="rotate(45, ${x}, ${chartH + 12})" 
+                               text-anchor="start" fill="#555" font-size="10">${label}</text>`;
+                }).join('');
+                
+                const svg = `
+                  <svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+                    <g transform="translate(${margin.left}, ${margin.top})">
+                      ${gridLines.join('')}
+                      ${yTicks.join('')}
+                      ${bars}
+                      ${xLabels}
+                      <line x1="0" y1="${zeroY}" x2="${chartW}" y2="${zeroY}" stroke="#aaa" stroke-width="1.5"/>
+                    </g>
+                  </svg>`;
+                
+                container.innerHTML = svg;
+              }
+              
+              // MSE Chart (lower is better)
+              createSVGBarChart('mseChart', [16.92, 2.22, 4.25, 4.60, 9.48, 8.60, 1.03], {
+                yMin: 0, formatY: v => v.toFixed(0), formatLabel: v => v.toFixed(2)
+              });
+              
+              // SSIM Chart (higher is better)
+              createSVGBarChart('ssimChart', [66.91, 88.11, 87.94, 87.00, 78.40, 79.40, 95.10], {
+                yMin: 60, formatY: v => v.toFixed(0), formatLabel: v => v.toFixed(1)
+              });
+              
+              // DINO Chart (higher is better)
+              createSVGBarChart('dinoChart', [89.00, 93.45, 95.75, 96.00, 92.60, 93.00, 98.70], {
+                yMin: 85, formatY: v => v.toFixed(0), formatLabel: v => v.toFixed(1)
+              });
+              
+              // LPIPS Chart (lower is better)
+              createSVGBarChart('lpipsChart', [27.55, 7.23, 11.66, 9.22, 17.44, 16.58, 3.08], {
+                yMin: 0, formatY: v => v.toFixed(0), formatLabel: v => v.toFixed(2)
+              });
+              
+              // Code Efficiency Chart (closer to 0 is better)
+              createSVGBarChartWithNegative('codeEffChart', [1300, -18300, -12900, -800, -2500, -2800, -334]);
+              
+              // Time to Sample Chart (in seconds) - LIVE is 1243s but we cap display for readability
+              // GPT-4o: 60, LIVE: 1243, VTracer: <1, StarVector-1B: 64, Qwen-3B+SFT: 67, Qwen-7B+SFT: 73, RLRF: 63
+              createSVGBarChart('timeChart', [60, 1243, 1, 64, 67, 73, 63], {
+                yMin: 0, formatY: v => v.toFixed(0), formatLabel: v => v < 2 ? '<1' : v.toFixed(0)
+              });
+            });
+          </script>
+          
+          <!-- Legend -->
+          <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 1.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <div style="width: 20px; height: 20px; background: rgba(0, 138, 215, 0.6); border: 2px solid rgba(0, 138, 215, 1); border-radius: 4px;"></div>
+              <span style="color: #555; font-size: 0.9rem;">Baselines</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <div style="width: 20px; height: 20px; background: rgba(246, 137, 70, 0.9); border: 2px solid rgba(246, 137, 70, 1); border-radius: 4px;"></div>
+              <span style="color: #555; font-size: 0.9rem; font-weight: 600;">RLRF (Ours)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Performance Table -->
+      <div class="columns is-centered animate-box delay-3">
+        <div class="column is-full">
+          <h2 class="title is-3 has-text-centered">Detailed Results</h2>
+          <p class="subtitle is-5 has-text-centered" style="margin-bottom: 2rem; color: #666;">
+            Full comparison across all models and metrics.
+          </p>
+          
+          <div class="table-container">
+            <div style="overflow-x: auto;">
+              <table class="table is-fullwidth is-hoverable" style="font-size: 0.95rem;">
+                <thead>
+                  <tr>
+                    <th>Model</th>
+                    <th>&darr; MSE</th>
+                    <th>&uarr; SSIM</th>
+                    <th>&uarr; DINO</th>
+                    <th>&darr; LPIPS</th>
+                    <th>Code Eff.</th>
+                    <th>Time(s)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- RLRF Results -->
+                  <tr style="background-color: #eef6fc; border-bottom: 2px solid #dee;"><td colspan="7" style="font-weight: 700; color: #0056b3; padding-top: 1rem; text-align: center;">RLRF Results on SVG Base Models</td></tr>
+                  
+                  <!-- StarVector-1B -->
+                  <tr style="border-top: 2px solid #ccc;"><td>StarVector-1B-Base</td><td>4.60</td><td>87.00</td><td>96.00</td><td>9.22</td><td>-800</td><td>64</td></tr>
+                  <tr style="font-weight: bold; background-color: rgba(246, 137, 70, 0.05);"><td>+RLRF (ours)</td><td>3.46</td><td>88.00</td><td>98.00</td><td>7.51</td><td>-127</td><td>23</td></tr>
+                  <tr style="color: #2e7d46; font-weight: bold; font-size: 0.9em; background-color: rgba(46, 125, 50, 0.05);">
+                    <td>&Delta; Improvement</td><td>-1.14</td><td>+1.0</td><td>+2.0</td><td>-1.71</td><td>+763</td><td>-41</td>
+                  </tr>
+
+                  <!-- Qwen2.5VL-3B -->
+                  <tr style="border-top: 1px solid #eee;"><td>Qwen2.5VL-3B-Instruct</td><td>23.31</td><td>62.28</td><td>69.26</td><td>35.30</td><td>+1.5k</td><td>24</td></tr>
+                  <tr><td>+SVG-SFT (ours)</td><td>9.48</td><td>78.40</td><td>92.60</td><td>17.44</td><td>-2.5k</td><td>67</td></tr>
+                  <tr style="font-weight: bold; background-color: rgba(246, 137, 70, 0.05);"><td>+RLRF (ours)</td><td>4.79</td><td>88.76</td><td>95.97</td><td>10.97</td><td>199</td><td>48</td></tr>
+                  <tr style="color: #2e7d46; font-weight: bold; font-size: 0.9em; background-color: rgba(46, 125, 50, 0.05);">
+                    <td>&Delta; Improvement</td><td>-4.69</td><td>+10.36</td><td>+3.37</td><td>-6.47</td><td>+2.7k</td><td>-19</td>
+                  </tr>
+
+                  <!-- Qwen2.5-VL-7B -->
+                  <tr style="border-top: 1px solid #eee;"><td>Qwen2.5-VL-7B-Instruct</td><td>23.10</td><td>61.40</td><td>78.00</td><td>33.80</td><td>+765</td><td>37</td></tr>
+                  <tr><td>+SVG-SFT (ours)</td><td>8.60</td><td>79.40</td><td>93.00</td><td>16.58</td><td>-2.8k</td><td>73</td></tr>
+                  <tr style="font-weight: bold; background-color: rgba(246, 137, 70, 0.05);"><td>+RLRF (ours)</td><td>1.03</td><td>95.10</td><td>98.70</td><td>3.08</td><td>-334</td><td>63</td></tr>
+                  <tr style="color: #2e7d46; font-weight: bold; font-size: 0.9em; background-color: rgba(46, 125, 50, 0.05);">
+                    <td>&Delta; Improvement</td><td>-7.57</td><td>+15.70</td><td>+5.70</td><td>-13.50</td><td>+2.5k</td><td>-10</td>
+                  </tr>
+
+                  <!-- VLMs (Open-Source) -->
+                  <tr style="background-color: #eef6fc; border-bottom: 2px solid #dee;"><td colspan="7" style="font-weight: 700; color: #0056b3; padding-top: 1rem; text-align: center;">VLMs (Open-Source)</td></tr>
+                  <tr><td>Qwen2.5VL-32B-Instruct</td><td>23.62</td><td>55.46</td><td>82.38</td><td>35.83</td><td>+1.3k</td><td>58</td></tr>
+                  <tr><td>Qwen2.5VL-72B-Instruct</td><td>23.20</td><td>55.72</td><td>81.68</td><td>34.14</td><td>+1.4k</td><td>62</td></tr>
+                  <tr><td>Llama4-Scout (109B)</td><td>20.98</td><td>58.58</td><td>83.72</td><td>33.37</td><td>+1.4k</td><td>57</td></tr>
+                  <tr><td>Llama4-Maverick (400B)</td><td>20.67</td><td>59.26</td><td>85.61</td><td>31.75</td><td>+1.3k</td><td>61</td></tr>
+
+                  <!-- VLMs (Closed-Source) -->
+                  <tr style="background-color: #eef6fc; border-bottom: 2px solid #dee;"><td colspan="7" style="font-weight: 700; color: #0056b3; padding-top: 1rem; text-align: center;">VLMs (Closed-Source)</td></tr>
+                  <tr><td>Gemini-Flash-1.5</td><td>20.38</td><td>59.65</td><td>84.70</td><td>33.27</td><td>+1.2k</td><td>59</td></tr>
+                  <tr><td>Gemini-Flash-2.0</td><td>19.31</td><td>60.21</td><td>86.53</td><td>32.10</td><td>+1.1k</td><td>63</td></tr>
+                  <tr><td>Gemini-1.5-Pro</td><td>20.19</td><td>60.75</td><td>84.17</td><td>33.02</td><td>+1.2k</td><td>58</td></tr>
+                  <tr><td>Claude 3.7 Sonnet</td><td>17.73</td><td>69.33</td><td>79.80</td><td>28.42</td><td>+1.4k</td><td>62</td></tr>
+                  <tr><td>GPT-4o-1120</td><td>16.92</td><td>66.91</td><td>89.00</td><td>27.55</td><td>+1.3k</td><td>60</td></tr>
+
+                  <!-- Image Processing -->
+                  <tr style="background-color: #eef6fc; border-bottom: 2px solid #dee;"><td colspan="7" style="font-weight: 700; color: #0056b3; padding-top: 1rem; text-align: center;">Image Processing Methods</td></tr>
+                  <tr><td>Im2VEC</td><td>18.10</td><td>76.50</td><td>69.20</td><td>29.10</td><td>-4.3k</td><td>&lt;1</td></tr>
+                  <tr><td>Potrace</td><td>8.15</td><td>77.28</td><td>89.23</td><td>19.10</td><td>-7.3k</td><td>12</td></tr>
+                  <tr><td>DiffVG</td><td>6.64</td><td>81.23</td><td>86.12</td><td>20.5</td><td>-19.7k</td><td>31</td></tr>
+                  <tr><td>PyAutoTrace</td><td>4.71</td><td>87.44</td><td>95.68</td><td>10.71</td><td>-99.7k</td><td>&lt;1</td></tr>
+                  <tr><td>VTracer</td><td>4.25</td><td>87.94</td><td>95.75</td><td>11.66</td><td>-12.9k</td><td>&lt;1</td></tr>
+                  <tr><td>SuperSVG</td><td>3.05</td><td>83.30</td><td>82.70</td><td>13.50</td><td>-65.6k</td><td>&lt;1</td></tr>
+                  <tr><td>LIVE</td><td>2.22</td><td>88.11</td><td>93.45</td><td>7.23</td><td>-18.3k</td><td>1,243</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+            <!-- Qualitative Results -->
+            <div class="columns is-centered has-text-centered animate-box delay-2" style="margin-bottom: 3rem;">
+              <div class="column is-full hover-card">
+                <h2 class="title is-3">Qualitative Results</h2>
+                <p class="subtitle is-5" style="margin-bottom: 1.5rem; color: #666;">High-fidelity generation with complex details</p>
+                <figure>
+                  <img src="images/apple-example.png" alt="Qualitative Results" style="width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); cursor: zoom-in;" onclick="openLightbox('images/apple-example.png', 'Example of SVG generation. RLRF produces cleaner paths and more accurate gradients compared to baseline methods.')">
+                  <figcaption><b>Figure:</b> Example of SVG generation. RLRF produces cleaner paths and more accurate gradients compared to baseline methods.</figcaption>
+                </figure>
+              </div>
+            </div>
+
+            <!-- Additional Qualitative Results Figures -->
+            <div class="columns is-centered has-text-centered animate-box delay-2" style="margin-bottom: 3rem;">
+              <div class="column is-full">
+                <div class="qualitative-figures-grid">
+                  <!-- Image-to-SVG Results -->
+                  <figure>
+                    <img src="images/im2svg-1.png" alt="Image-to-SVG generation results" style="width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); cursor: zoom-in;" onclick="openLightbox('images/im2svg-1.png', 'Image-to-SVG generation results')">
+                    <figcaption><b>Figure:</b> Image-to-SVG generation results.</figcaption>
+                  </figure>
+
+                  <!-- Image-to-SVG Emoji Results -->
+                  <figure>
+                    <img src="images/im2svg-emoji-1.png" alt="Image-to-SVG emoji generation results" style="width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); cursor: zoom-in;" onclick="openLightbox('images/im2svg-emoji-1.png', 'Image-to-SVG emoji generation results')">
+                    <figcaption><b>Figure:</b> Image-to-SVG emoji generation results.</figcaption>
+                  </figure>
+
+                  <!-- Text-to-SVG Thinking Results -->
+                  <figure>
+                    <img src="images/text2svg-thinking-1.png" alt="Text-to-SVG thinking process results" style="width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); cursor: zoom-in;" onclick="openLightbox('images/text2svg-thinking-1.png', 'Text-to-SVG thinking process results')">
+                    <figcaption><b>Figure:</b> Text-to-SVG thinking process results.</figcaption>
+                  </figure>
+
+                  <!-- Text-to-SVG Results -->
+                  <figure>
+                    <img src="images/text2svg-1.png" alt="Text-to-SVG generation results" style="width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); cursor: zoom-in;" onclick="openLightbox('images/text2svg-1.png', 'Text-to-SVG generation results')">
+                    <figcaption><b>Figure:</b> Text-to-SVG generation results.</figcaption>
+                  </figure>
+                </div>
+              </div>
+            </div>
+
+            <style>
+              .qualitative-figures-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+                gap: 2rem;
+                margin-top: 2rem;
+              }
+
+              @media (max-width: 768px) {
+                .qualitative-figures-grid {
+                  grid-template-columns: 1fr;
+                }
+              }
+
+              .qualitative-figures-grid figure img {
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+              }
+
+              .qualitative-figures-grid figure:hover img {
+                transform: translateY(-5px);
+                box-shadow: 0 12px 24px rgba(0,0,0,0.12) !important;
+              }
+              
+              figure img {
+                cursor: zoom-in;
+              }
+            </style>
+      <!-- Citation -->
+      <div class="container is-max-desktop" style="margin-top: 4rem;">
+        <h2 class="title is-3 has-text-centered">Citation</h2>
+        <div class="citation-box" style="margin-top: 2rem; padding: 2rem; background: linear-gradient(135deg, rgba(246, 137, 70, 0.05), rgba(0, 138, 215, 0.05)); border-radius: 12px; text-align: left; font-family: 'Fira Code', monospace; font-size: 1rem; overflow-x: auto; box-shadow: 0 4px 16px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease; position: relative;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 32px rgba(246, 137, 70, 0.15), 0 8px 24px rgba(0, 138, 215, 0.15)'; this.style.background='linear-gradient(135deg, rgba(246, 137, 70, 0.1), rgba(0, 138, 215, 0.1))';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 16px rgba(0,0,0,0.08)'; this.style.background='linear-gradient(135deg, rgba(246, 137, 70, 0.05), rgba(0, 138, 215, 0.05))';">
+          <button class="citation-copy-btn" onclick="copyCitation()" title="Copy citation to clipboard">
+            <i class="fas fa-copy" id="citationCopyIcon"></i>
+            <span class="citation-copy-text" id="citationCopyText">Copy</span>
+          </button>
+          <pre id="citationText" style="background-color: transparent; padding: 0.5rem; padding-right: 4rem; overflow-x: auto; border: none; box-shadow: none; margin: 0; white-space: pre-wrap; line-height: 1.6; user-select: text; cursor: text;">@inproceedings{rodriguez2025rendering,
+  title={Rendering-Aware Reinforcement Learning for Vector Graphics Generation},
+  author={Rodriguez, Juan A and Zhang, Haotian and Puri, Abhay and Feizi, Aarash and Pramanik, Rishav and Wichmann, Pascal and Mondal, Arnab and Samsami, Mohammad Reza and Awal, Rabiul and Taslakian, Perouz and others},
+  booktitle={Advances in Neural Information Processing Systems (NeurIPS 2025)},
+  year={2025}
+}</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container is-max-desktop">
+      <div class="columns">
+        <div class="column has-text-centered">
+          <p class="is-size-5" style="margin-bottom: 1rem;">
+            <strong>RLRF</strong>
+          </p>
+          <p>© 2025 RLRF Team. All rights reserved.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Abstract Modal -->
+  <div id="abstractModal" class="modal">
+    <div class="modal-background" onclick="closeAbstractModal()"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Abstract</h2>
+        <button class="modal-close" onclick="closeAbstractModal()" aria-label="Close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="abstract-container">
+          <div class="abstract-inner">
+            <div class="abstract-label">Abstract</div>
+            <div class="abstract-text">
+              <p>
+                We introduce <strong>RLRF</strong> (Reinforcement Learning from Rendering Feedback), a novel approach for training vision-language models to generate high-quality vector graphics in SVG format. Unlike traditional supervised learning methods that only optimize token-level predictions, RLRF leverages the rendered visual output as feedback to guide the learning process.
+              </p>
+              <p>
+                Our method trains a model to generate SVG code by comparing the rendered image against the target image, allowing the model to learn from visual mistakes and improve generation quality. This is particularly effective for complex shapes, gradients, and fine details that are difficult to represent accurately when the model only sees code tokens.
+              </p>
+              <p>
+                RLRF employs a composite reward function combining three complementary signals: <strong>reconstruction reward</strong> for pixel-level fidelity, <strong>semantic similarity</strong> for high-level perceptual alignment using vision embeddings, and <strong>code efficiency</strong> to encourage compact SVG generation.
+              </p>
+              <p>
+                Experimental results demonstrate that RLRF achieves state-of-the-art performance across multiple metrics including MSE, SSIM, DINO, and LPIPS, while maintaining competitive code efficiency. Our approach significantly outperforms baseline methods including GPT-4o, LIVE, VTracer, and supervised fine-tuning approaches, establishing a new benchmark for vector graphics generation.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openAbstractModal() {
+      const modal = document.getElementById('abstractModal');
+      if (modal) {
+        modal.classList.add('is-active');
+        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+      }
+    }
+
+    function closeAbstractModal() {
+      const modal = document.getElementById('abstractModal');
+      if (modal) {
+        modal.classList.remove('is-active');
+        document.body.style.overflow = ''; // Restore scrolling
+      }
+    }
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        closeAbstractModal();
+      }
+    });
+
+    // Copy citation to clipboard
+    function copyCitation() {
+      const citationText = document.getElementById('citationText').textContent;
+      const copyIcon = document.getElementById('citationCopyIcon');
+      const copyText = document.getElementById('citationCopyText');
+      
+      // Use the Clipboard API
+      navigator.clipboard.writeText(citationText).then(function() {
+        // Success feedback
+        copyIcon.classList.remove('fa-copy');
+        copyIcon.classList.add('fa-check');
+        copyText.textContent = 'Copied!';
+        
+        // Reset after 2 seconds
+        setTimeout(function() {
+          copyIcon.classList.remove('fa-check');
+          copyIcon.classList.add('fa-copy');
+          copyText.textContent = 'Copy';
+        }, 2000);
+      }).catch(function(err) {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = citationText;
+        textArea.style.position = 'fixed';
+        textArea.style.opacity = '0';
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+          document.execCommand('copy');
+          copyIcon.classList.remove('fa-copy');
+          copyIcon.classList.add('fa-check');
+          copyText.textContent = 'Copied!';
+          setTimeout(function() {
+            copyIcon.classList.remove('fa-check');
+            copyIcon.classList.add('fa-copy');
+            copyText.textContent = 'Copy';
+          }, 2000);
+        } catch (err) {
+          console.error('Failed to copy:', err);
+        }
+        document.body.removeChild(textArea);
+      });
+    }
+  </script>
+
+  <style>
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal.is-active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal-content {
+      position: relative;
+      background: white;
+      border-radius: 20px;
+      max-width: 800px;
+      width: 90%;
+      max-height: 90vh;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: slideUp 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid #eee;
+      background: linear-gradient(135deg, rgba(246, 137, 70, 0.05), rgba(0, 138, 215, 0.05));
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #f68946, #008AD7);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #666;
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .modal-close:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+      color: #333;
+      transform: rotate(90deg);
+    }
+
+    .modal-body {
+      padding: 2rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    /* Ensure abstract container styles work in modal */
+    .modal-body .abstract-container {
+      margin-bottom: 0;
+    }
+
+    /* Citation Copy Button Styles */
+    .citation-copy-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, rgba(246, 137, 70, 0.9), rgba(0, 138, 215, 0.9));
+      color: white;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+      z-index: 10;
+      font-family: 'Google Sans', 'Noto Sans', sans-serif;
+    }
+
+    .citation-copy-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(246, 137, 70, 0.4), 0 2px 8px rgba(0, 138, 215, 0.3);
+      background: linear-gradient(135deg, rgba(246, 137, 70, 1), rgba(0, 138, 215, 1));
+    }
+
+    .citation-copy-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    .citation-copy-btn i {
+      font-size: 1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .citation-copy-btn:hover i {
+      transform: scale(1.1);
+    }
+
+    .citation-copy-text {
+      font-size: 0.85rem;
+    }
+
+    .citation-box {
+      position: relative;
+    }
+
+    .citation-box pre {
+      user-select: text;
+      -webkit-user-select: text;
+      -moz-user-select: text;
+      -ms-user-select: text;
+    }
+  </style>
+
+  <!-- Image Lightbox Modal -->
+  <div id="imageLightbox" class="image-lightbox">
+    <div class="lightbox-background" onclick="closeLightbox()"></div>
+    <div class="lightbox-content">
+      <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close">
+        <i class="fas fa-times"></i>
+      </button>
+      <div class="lightbox-image-container">
+        <img id="lightboxImage" src="" alt="" class="lightbox-image">
+        <div class="lightbox-caption" id="lightboxCaption"></div>
+      </div>
+      <div class="lightbox-controls">
+        <button class="lightbox-control-btn" onclick="zoomOut()" aria-label="Zoom Out" title="Zoom Out">
+          <i class="fas fa-search-minus"></i>
+        </button>
+        <button class="lightbox-control-btn" onclick="resetZoom()" aria-label="Reset Zoom" title="Reset Zoom">
+          <i class="fas fa-search"></i>
+        </button>
+        <button class="lightbox-control-btn" onclick="zoomIn()" aria-label="Zoom In" title="Zoom In">
+          <i class="fas fa-search-plus"></i>
+        </button>
+        <button class="lightbox-control-btn" onclick="downloadImage()" aria-label="Download" title="Download Image">
+          <i class="fas fa-download"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* Image Lightbox Styles */
+    .image-lightbox {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .image-lightbox.is-active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lightbox-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(8px);
+      animation: fadeIn 0.3s ease;
+    }
+
+    .lightbox-content {
+      position: relative;
+      max-width: 95vw;
+      max-height: 95vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+      animation: slideUpScale 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .lightbox-image-container {
+      position: relative;
+      max-width: 100%;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: auto;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .lightbox-image {
+      max-width: 100%;
+      max-height: 75vh;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+      cursor: grab;
+      user-select: none;
+    }
+
+    .lightbox-image:active {
+      cursor: grabbing;
+    }
+
+    .lightbox-image.zoomed {
+      cursor: grab;
+    }
+
+    .lightbox-caption {
+      margin-top: 1rem;
+      padding: 0.75rem 1.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 8px;
+      color: white;
+      font-size: 0.95rem;
+      text-align: center;
+      max-width: 90%;
+      line-height: 1.5;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: -50px;
+      right: 0;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0.75rem;
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+      z-index: 2;
+    }
+
+    .lightbox-close:hover {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.4);
+      transform: rotate(90deg) scale(1.1);
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+    }
+
+    .lightbox-controls {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      padding: 0.75rem 1.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .lightbox-control-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      font-size: 1.1rem;
+      cursor: pointer;
+      padding: 0.6rem 1rem;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .lightbox-control-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.4);
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+    }
+
+    .lightbox-control-btn:active {
+      transform: scale(0.95);
+    }
+
+    @keyframes slideUpScale {
+      from {
+        transform: translateY(30px) scale(0.95);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* Zoom and pan functionality */
+    .lightbox-image-container {
+      cursor: grab;
+    }
+
+    .lightbox-image-container:active {
+      cursor: grabbing;
+    }
+
+    @media (max-width: 768px) {
+      .lightbox-controls {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      .lightbox-close {
+        top: 10px;
+        right: 10px;
+      }
+    }
+  </style>
+
+  <script>
+    let currentZoom = 1;
+    let isDragging = false;
+    let startX, startY, scrollLeft, scrollTop;
+    let currentImageSrc = '';
+
+    function openLightbox(imageSrc, caption) {
+      const lightbox = document.getElementById('imageLightbox');
+      const lightboxImage = document.getElementById('lightboxImage');
+      const lightboxCaption = document.getElementById('lightboxCaption');
+      
+      currentImageSrc = imageSrc;
+      lightboxImage.src = imageSrc;
+      lightboxCaption.textContent = caption || '';
+      currentZoom = 1;
+      lightboxImage.style.transform = 'scale(1)';
+      lightboxImage.style.transformOrigin = 'center center';
+      
+      // Reset scroll position
+      const container = document.querySelector('.lightbox-image-container');
+      container.scrollLeft = 0;
+      container.scrollTop = 0;
+      
+      lightbox.classList.add('is-active');
+      document.body.style.overflow = 'hidden';
+      
+      // Add pan functionality
+      setupPanning();
+    }
+
+    function closeLightbox() {
+      const lightbox = document.getElementById('imageLightbox');
+      lightbox.classList.remove('is-active');
+      document.body.style.overflow = '';
+      currentZoom = 1;
+      isDragging = false;
+    }
+
+    function zoomIn() {
+      currentZoom = Math.min(currentZoom + 0.25, 3);
+      applyZoom();
+    }
+
+    function zoomOut() {
+      currentZoom = Math.max(currentZoom - 0.25, 0.5);
+      applyZoom();
+    }
+
+    function resetZoom() {
+      currentZoom = 1;
+      applyZoom();
+      const container = document.querySelector('.lightbox-image-container');
+      container.scrollLeft = 0;
+      container.scrollTop = 0;
+    }
+
+    function applyZoom() {
+      const lightboxImage = document.getElementById('lightboxImage');
+      lightboxImage.style.transform = `scale(${currentZoom})`;
+      lightboxImage.classList.add('zoomed');
+    }
+
+    function downloadImage() {
+      const link = document.createElement('a');
+      link.href = currentImageSrc;
+      link.download = currentImageSrc.split('/').pop();
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function setupPanning() {
+      const container = document.querySelector('.lightbox-image-container');
+      if (!container) return;
+      
+      // Remove existing listeners by using a flag
+      container.removeEventListener('mousedown', handleMouseDown);
+      container.removeEventListener('mousemove', handleMouseMove);
+      container.removeEventListener('mouseup', handleMouseUp);
+      container.removeEventListener('mouseleave', handleMouseLeave);
+      container.removeEventListener('touchstart', handleTouchStart);
+      container.removeEventListener('touchmove', handleTouchMove);
+      container.removeEventListener('wheel', handleWheel);
+      
+      // Add new listeners
+      container.addEventListener('mousedown', handleMouseDown);
+      container.addEventListener('mousemove', handleMouseMove);
+      container.addEventListener('mouseup', handleMouseUp);
+      container.addEventListener('mouseleave', handleMouseLeave);
+      container.addEventListener('touchstart', handleTouchStart);
+      container.addEventListener('touchmove', handleTouchMove);
+      container.addEventListener('wheel', handleWheel, { passive: false });
+    }
+
+    function handleMouseDown(e) {
+      if (currentZoom > 1) {
+        isDragging = true;
+        const container = e.currentTarget;
+        startX = e.pageX - container.offsetLeft;
+        startY = e.pageY - container.offsetTop;
+        scrollLeft = container.scrollLeft;
+        scrollTop = container.scrollTop;
+        container.style.cursor = 'grabbing';
+      }
+    }
+
+    function handleMouseMove(e) {
+      if (!isDragging) return;
+      e.preventDefault();
+      const container = e.currentTarget;
+      const x = e.pageX - container.offsetLeft;
+      const y = e.pageY - container.offsetTop;
+      const walkX = (x - startX) * 2;
+      const walkY = (y - startY) * 2;
+      container.scrollLeft = scrollLeft - walkX;
+      container.scrollTop = scrollTop - walkY;
+    }
+
+    function handleMouseUp(e) {
+      isDragging = false;
+      e.currentTarget.style.cursor = 'grab';
+    }
+
+    function handleMouseLeave(e) {
+      isDragging = false;
+      e.currentTarget.style.cursor = 'grab';
+    }
+
+    let touchStartX, touchStartY, touchScrollLeft, touchScrollTop;
+
+    function handleTouchStart(e) {
+      if (currentZoom > 1) {
+        const container = e.currentTarget;
+        touchStartX = e.touches[0].pageX - container.offsetLeft;
+        touchStartY = e.touches[0].pageY - container.offsetTop;
+        touchScrollLeft = container.scrollLeft;
+        touchScrollTop = container.scrollTop;
+      }
+    }
+
+    function handleTouchMove(e) {
+      if (currentZoom > 1 && touchStartX !== undefined) {
+        e.preventDefault();
+        const container = e.currentTarget;
+        const x = e.touches[0].pageX - container.offsetLeft;
+        const y = e.touches[0].pageY - container.offsetTop;
+        const walkX = (x - touchStartX) * 2;
+        const walkY = (y - touchStartY) * 2;
+        container.scrollLeft = touchScrollLeft - walkX;
+        container.scrollTop = touchScrollTop - walkY;
+      }
+    }
+
+    function handleWheel(e) {
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? -0.1 : 0.1;
+        currentZoom = Math.max(0.5, Math.min(3, currentZoom + delta));
+        applyZoom();
+      }
+    }
+
+    // Close lightbox on Escape key
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        const lightbox = document.getElementById('imageLightbox');
+        if (lightbox.classList.contains('is-active')) {
+          closeLightbox();
+        }
+      }
+    });
+
+    // Prevent image drag
+    document.addEventListener('DOMContentLoaded', function() {
+      const images = document.querySelectorAll('img');
+      images.forEach(img => {
+        img.addEventListener('dragstart', (e) => {
+          e.preventDefault();
+        });
+      });
+    });
+  </script>
+</body>
+</html>
