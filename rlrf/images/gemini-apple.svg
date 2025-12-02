@@ -1,0 +1,79 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Background Color -->
+    <style>
+      .bg { fill: #FDF9F0; }
+    </style>
+
+    <!-- Apple Body Gradient -->
+    <radialGradient id="appleGradient" cx="35%" cy="35%" r="80%" fx="30%" fy="30%">
+      <stop offset="0%" stop-color="#FF7F50" /> <!-- Light Orange-Red highlight area -->
+      <stop offset="40%" stop-color="#FF4538" /> <!-- Main Red -->
+      <stop offset="100%" stop-color="#B22222" /> <!-- Dark Red shadow -->
+    </radialGradient>
+
+    <!-- Leaf Gradient -->
+    <linearGradient id="leafGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7DBD5D" />
+      <stop offset="100%" stop-color="#3A7A3A" />
+    </linearGradient>
+
+    <!-- Leaf Vein Gradient -->
+    <linearGradient id="veinGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9ACA7A" />
+      <stop offset="100%" stop-color="#5C9C5C" />
+    </linearGradient>
+
+    <!-- Stem Gradient -->
+    <linearGradient id="stemGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#5D2E2E" />
+      <stop offset="50%" stop-color="#4A2020" />
+      <stop offset="100%" stop-color="#381515" />
+    </linearGradient>
+
+    <!-- Drop Shadow Filter -->
+    <filter id="blurFilter">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="8" />
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" class="bg" />
+
+  <!-- Drop Shadow -->
+  <ellipse cx="256" cy="435" rx="110" ry="15" fill="#000" opacity="0.15" filter="url(#blurFilter)" />
+
+  <!-- Leaf (Back Layer) -->
+  <path d="M 260 215 
+           Q 220 140 160 120 
+           Q 220 180 240 230 Z" 
+        fill="url(#leafGradient)" />
+  <!-- Leaf Vein -->
+  <path d="M 260 215 Q 210 165 160 120" stroke="url(#veinGradient)" stroke-width="2" fill="none" opacity="0.4"/>
+
+  <!-- Stem -->
+  <path d="M 255 220 
+           Q 275 180 300 130 
+           L 325 135 
+           Q 295 190 270 225 Z" 
+        fill="url(#stemGradient)" />
+  
+  <!-- Stem Cap (Rounded top) -->
+  <circle cx="312.5" cy="132.5" r="13" fill="#5D2E2E" transform="rotate(-15 312.5 132.5) scale(1, 0.4)" />
+
+  <!-- Apple Body -->
+  <!-- Constructed using Bezier curves to create the heart shape -->
+  <path d="M 256 230 
+           C 220 230 130 200 130 330 
+           C 130 450 220 480 256 460 
+           C 292 480 382 450 382 330 
+           C 382 200 292 230 256 230 Z" 
+        fill="url(#appleGradient)" />
+
+  <!-- Apple Highlight (The glossy shine on the top left) -->
+  <ellipse cx="190" cy="270" rx="35" ry="50" transform="rotate(-20 190 270)" fill="#FFF" opacity="0.15" />
+  
+  <!-- Top Cavity Shadow (to give depth where stem enters) -->
+  <path d="M 230 238 Q 256 255 282 238 Q 256 245 230 238" fill="#000" opacity="0.2" />
+
+</svg>

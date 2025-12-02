@@ -1,0 +1,80 @@
+<svg width="512" height="512" viewBox="0 0 512 512"
+     xmlns="http://www.w3.org/2000/svg">
+
+  <defs>
+    <!-- Soft shadow -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8" result="blur"/>
+      <feOffset in="blur" dx="0" dy="8" result="offsetBlur"/>
+      <feMerge>
+        <feMergeNode in="offsetBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Apple body gradient -->
+    <radialGradient id="appleGrad" cx="30%" cy="20%" r="80%">
+      <stop offset="0%" stop-color="#ffb36a"/>
+      <stop offset="40%" stop-color="#ff7a3d"/>
+      <stop offset="100%" stop-color="#dc2a23"/>
+    </radialGradient>
+
+    <!-- Leaf gradient -->
+    <linearGradient id="leafGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#66c26a"/>
+      <stop offset="100%" stop-color="#2d8738"/>
+    </linearGradient>
+
+    <!-- Stem gradient -->
+    <linearGradient id="stemGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#8c4b2a"/>
+      <stop offset="100%" stop-color="#472016"/>
+    </linearGradient>
+
+    <!-- Highlight -->
+    <radialGradient id="highlightGrad" cx="25%" cy="20%" r="35%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect x="0" y="0" width="512" height="512" fill="#f6ecdd"/>
+
+  <!-- Drop shadow -->
+  <ellipse cx="256" cy="372" rx="120" ry="40" fill="#000000" opacity="0.12"/>
+
+  <!-- Leaf -->
+  <path d="M280 132
+           C 248 104 220 100 196 104
+             212 134 220 168 252 188
+             280 172 292 148 296 124
+             292 126 286 129 280 132 Z"
+        fill="url(#leafGrad)"/>
+
+  <!-- Stem -->
+  <path d="M266 110
+           C 262 84 264 68 276 52
+             286 40 298 36 308 34
+             304 46 302 60 298 78
+             294 96 288 110 282 124
+             278 120 272 116 266 110 Z"
+        fill="url(#stemGrad)"/>
+
+  <!-- Apple body -->
+  <path filter="url(#shadow)"
+        d="M256 104
+           C 216 88 168 100 142 136
+             122 164 112 200 114 236
+             118 298 148 340 180 368
+             208 394 234 404 256 408
+             278 404 304 394 332 368
+             364 340 394 298 398 236
+             400 200 390 164 370 136
+             344 100 296 88 256 104 Z"
+        fill="url(#appleGrad)"/>
+
+  <!-- Highlight on apple -->
+  <ellipse cx="210" cy="188" rx="70" ry="80" fill="url(#highlightGrad)"/>
+
+</svg>
